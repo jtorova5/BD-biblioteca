@@ -1,0 +1,71 @@
+use biblioteca;
+
+drop table if exists usuarios;
+create table if not exists usuarios (
+Id_usuario int auto_increment Primary key,
+Nombre_usuario varchar(30) not null,
+Apellido_paterno varchar(30) not null,
+Apellido_materno varchar(30),
+Sexo enum ('M', 'F') not null,
+DNI int,
+Edad int, 
+Dirección varchar(60) not null,
+Teléfono varchar(25) not null
+);
+
+drop table if exists ubicaciones;
+create table if not exists ubicaciones (
+Código_ubicación varchar(32) Primary key,
+Título varchar(100) not null,
+Número_ejemplar int
+);
+
+drop table if exists editoriales;
+create table if not exists editoriales (
+Id_editorial int auto_increment Primary key,
+Nombre_editorial varchar(50) not null,
+Dirección_editorial varchar(100),
+Teléfono_editorial varchar(25)
+);
+
+drop table if exists autores;
+create table if not exists autores (
+Id_autor int auto_increment Primary key,
+Nombre_autor varchar(32) not null,
+Apellido_autor varchar(32) not null
+);
+
+drop table if exists idiomas;
+create table if not exists idiomas (
+Id_idioma int auto_increment Primary key,
+Idioma varchar(15) not null
+);
+
+drop table if exists libros;
+create table if not exists libros (
+Id_libro int auto_increment Primary key,
+Código_ubicación varchar(32) not null,
+Id_editorial int not null,
+Id_autor int not null,
+Id_idioma int not null,
+Género varchar(20), 
+Fecha_publicación date,
+ISBN varchar(100) not null, 
+Estado enum ('Disponible', 'Prestado') not null,
+constraint `libros_ubicaciones` foreign key (Código_ubicación) references ubicaciones (Código_ubicación),
+constraint `libros_editoriales` foreign key (Id_editorial) references editoriales (Id_editorial),
+constraint `libros_autores` foreign key (Id_autor) references autores (Id_autor),
+constraint `libros_idiomas` foreign key (Id_idioma) references idiomas (Id_idioma)
+);
+
+drop table if exists préstamos;
+create table if not exists préstamos (
+Número_préstamo int auto_increment Primary key,
+Id_usuario int not null,
+Id_libro int not null,
+Fecha_préstamo date not null,
+Fecha_límite date not null, 
+Fecha_devolución date,
+constraint `préstamos_usuario` foreign key (Id_usuario) references usuarios (Id_usuario),
+constraint `préstamos_libros` foreign key (Id_libro) references libros (Id_libro)
+);
